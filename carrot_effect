@@ -1,0 +1,44 @@
++-----------------------------------------------------------------------------------------------------+
+|                              Data Integration & Unified Data Layer                                   |
+|       (Semantic Scholar, Figshare, Zenodo, Dryad, Institutional Repositories, etc.)                  |
++-----------------------------------------------------------------------------------------------------+
+                                              |
+                                              v
++-----------------------------------------------------------------------------------------------------+
+|                              Foundation Knowledge Graph                                              |
+|                   (Continuously updated, tracked, timestamped scholarly data)                        |
++-----------------------------------------------------------------------------------------------------+
+                         |                    |                    |                      |
+                         v                    v                    v                      v
++----------------------+   +-------------------+   +------------------+   +-----------------------------+
+| Structural Score     |   | Semantic Score    |   | Knowledge Update |   | **Data Sharing Score** 🥕   |
+|                      |   |                   |   | Score            |   |                             |
+| (connectivity,       |   | (abstract         |   | (recent activity)|   | (datasets openly shared)    |
+| centrality, etc.)    |   | similarity, etc.) |   |                  |   |                             |
+|                      |   |                   |   |                  |   | Each open dataset           |
+|                      |   |                   |   |                  |   | **explicitly increases**    |
+|                      |   |                   |   |                  |   | Data Sharing Score          |
++----------------------+   +-------------------+   +------------------+   +-----------------------------+
+            \                     /                      |                        /
+             \                   /                       |                       /
+              \                 /                        |                      /
+               +---------------+-------------------------+---------------------+
+                               |
+                               v
++------------------------------------------------------------------------------------------------------+
+|                                   **Explicit S Index Calculation**                                   |
+|                                                                                                      |
+| S Index = 100 × [0.40 × Structural + 0.30 × Semantic + 0.15 × Knowledge Update                       |
+|                  + **0.15 × Data Sharing Score (explicit carrot incentive)** 🥕                      |
+|                                                                                                      |
+|      🔑 **Higher S Index = Greater Visibility, Impact, Funding, Career Opportunities** 🔑            |
++------------------------------------------------------------------------------------------------------+
+                               |
+                               v
++------------------------------------------------------------------------------------------------------+
+|                                  **Researchers' Direct Benefits (Carrot)**                           |
+|   - Increased citations & visibility                                                                 |
+|   - Enhanced professional reputation                                                                 |
+|   - Better opportunities for grants, promotions, collaborations, awards                              |
+|   - Explicit recognition of open-science contributions                                               |
++------------------------------------------------------------------------------------------------------+
