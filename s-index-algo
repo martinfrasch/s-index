@@ -1,61 +1,52 @@
-+----------------------------------------------------------------------------------------+
-|                           Data Sources Integration Layer                               |
-+------------------+-------------------+----------------------------+--------------------+
-| Semantic Scholar | Figshare API      | Additional Data Sources    |    ...             |
-+------------------+-------------------+----------------------------+--------------------+
-       |                   |                         |
-       v                   v                         v
-+------------------------------+-------------------------------------------+
-|                         Unified Data Ingestion                           |
-|                   (Standardized data representation)                     |
-+--------------------------------------+------------------------------------+
++-----------------------------------------------------------------------------------+
+|                         Data Integration Layer                                    |
+| (Semantic Scholar, Figshare, Other Repositories)                                  |
++-----------------------------------------------------------------------------------+
                                        |
                                        v
-+-----------------------------------------------------------------------------+
-|                     Knowledge Graph Construction                           |
-|                           (NetworkX / Neo4j)                               |
-+-----------------------------------------------------------------------------+
-| Nodes:                                                                      |
-| - Papers                                                                    |
-| - Datasets                                                                  |
-| - Researchers                                                               |
-| Relationships:                                                              |
-| - Citations ('CITES')                                                       |
-| - Authorship                                                                |
-| - Data sharing                                                              |
-| Metadata per node/edge:                                                     |
-| - Abstract Embeddings                                                       |
-| - Timestamp ('added_date')                                                  |
-+-----------------------------------------------------------------------------+
-            |                             |                          |
-            v                             v                          v
-+-------------------+    +------------------+    +-------------------------------+
-| Structural Metrics|    | Semantic Metrics |    | Objective Knowledge Update    |
-+-------------------+    +------------------+    +-------------------------------+
-| - Connectivity    |    | - Similarity     |    | - Recent Nodes/Edges Rate     |
-| - Degree Centrality|   | - Completeness   |    |   (based on timestamps)       |
-| - PageRank        |    | - Coverage       |    | - Temporal update frequency   |
-| - Betweenness     |    | - Diversity      |    |   (defined objectively by     |
-| - Clustering Coef.|    |                  |    |   recent additions)           |
-+-------------------+    +------------------+    +-------------------------------+
-             \               |                   /
-              \              |                  /
-               \             |                 /
-                +------------+----------------+
++-----------------------------------------------------------------------------------+
+|                      Unified Data Ingestion                                       |
+|           (Standardized, timestamped data representation)                         |
++-----------------------------------------------------------------------------------+
+                                       |
+                                       v
++-----------------------------------------------------------------------------------+
+|                    Foundation Knowledge Graph                                     |
+|                 (Nodes, Edges with metadata & timestamps)                         |
++-----------------------------------------------------------------------------------+
+            |                  |                  |                    |
+            v                  v                  v                    v
++---------------+  +----------------+  +------------------+  +-------------------------+
+| Structural    |  | Semantic       |  | Data Sharing     |  | Knowledge Update        |
+| (weight=0.40) |  | (weight=0.30)  |  | (weight=0.15)    |  | (weight=0.15)           |
++---------------+  +----------------+  +------------------+  +-------------------------+
+| Connectivity  |  | Abstract sim.  |  | Figshare dataset |  | Recent node additions   |
+| Degree Centr. |  | Completeness   |  | count            |  | Recent edge additions   |
+| PageRank      |  | Ontol. coverage|  | (normalized)     |  | (normalized)            |
+| Betweenness   |  | Relationship   |  |                  |  |                         |
+| Clustering    |  | diversity      |  |                  |  |                         |
++---------------+  +----------------+  +------------------+  +-------------------------+
+        |                  |                    |                      |
+        v                  v                    v                      v
+ Structural            Semantic              Data                  Knowledge
+ Score                 Score                 Sharing               Update Score
+ (Avg metrics)         (Avg metrics)         Score                 (Avg metrics)
+                                             (normalized)  
+        \                  |                   /                      /
+         \                 |                  /                      /
+          \                |                 /                      /
+           \               |                /                      /
+            +--------------+---------------+----------------------+
                              |
                              v
 +-----------------------------------------------------------------------------------+
-|                        Integrated Metrics Computation                             |
-|                         (Weighted aggregation into S Index)                       |
-|                                                                                   |
-| S Index = (structural_weight * structural_score)                                  |
-|          + (semantic_weight * semantic_score)                                     |
-|          + (data_sharing_weight * data_sharing_score)                             |
-|          + (knowledge_update_weight * knowledge_update_score)                     |
+|                             S Index Computation                                   |
+| S Index = 100 × [0.40 × Structural Score + 0.30 × Semantic Score                  |
+|                  + 0.15 × Data Sharing Score + 0.15 × Knowledge Update Score]      |
 +-----------------------------------------------------------------------------------+
                              |
                              v
 +-----------------------------------------------------------------------------------+
-|                            Application Layer                                      |
-|                  (Researcher impact dashboards, analytics)                        |
+|                        Application & Analytics Layer                              |
+|               (Research Impact Dashboards, Analytics Tools, Insights)             |
 +-----------------------------------------------------------------------------------+
