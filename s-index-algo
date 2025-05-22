@@ -1,0 +1,61 @@
++----------------------------------------------------------------------------------------+
+|                           Data Sources Integration Layer                               |
++------------------+-------------------+----------------------------+--------------------+
+| Semantic Scholar | Figshare API      | Additional Data Sources    |    ...             |
++------------------+-------------------+----------------------------+--------------------+
+       |                   |                         |
+       v                   v                         v
++------------------------------+-------------------------------------------+
+|                         Unified Data Ingestion                           |
+|                   (Standardized data representation)                     |
++--------------------------------------+------------------------------------+
+                                       |
+                                       v
++-----------------------------------------------------------------------------+
+|                     Knowledge Graph Construction                           |
+|                           (NetworkX / Neo4j)                               |
++-----------------------------------------------------------------------------+
+| Nodes:                                                                      |
+| - Papers                                                                    |
+| - Datasets                                                                  |
+| - Researchers                                                               |
+| Relationships:                                                              |
+| - Citations ('CITES')                                                       |
+| - Authorship                                                                |
+| - Data sharing                                                              |
+| Metadata per node/edge:                                                     |
+| - Abstract Embeddings                                                       |
+| - Timestamp ('added_date')                                                  |
++-----------------------------------------------------------------------------+
+            |                             |                          |
+            v                             v                          v
++-------------------+    +------------------+    +-------------------------------+
+| Structural Metrics|    | Semantic Metrics |    | Objective Knowledge Update    |
++-------------------+    +------------------+    +-------------------------------+
+| - Connectivity    |    | - Similarity     |    | - Recent Nodes/Edges Rate     |
+| - Degree Centrality|   | - Completeness   |    |   (based on timestamps)       |
+| - PageRank        |    | - Coverage       |    | - Temporal update frequency   |
+| - Betweenness     |    | - Diversity      |    |   (defined objectively by     |
+| - Clustering Coef.|    |                  |    |   recent additions)           |
++-------------------+    +------------------+    +-------------------------------+
+             \               |                   /
+              \              |                  /
+               \             |                 /
+                +------------+----------------+
+                             |
+                             v
++-----------------------------------------------------------------------------------+
+|                        Integrated Metrics Computation                             |
+|                         (Weighted aggregation into S Index)                       |
+|                                                                                   |
+| S Index = (structural_weight * structural_score)                                  |
+|          + (semantic_weight * semantic_score)                                     |
+|          + (data_sharing_weight * data_sharing_score)                             |
+|          + (knowledge_update_weight * knowledge_update_score)                     |
++-----------------------------------------------------------------------------------+
+                             |
+                             v
++-----------------------------------------------------------------------------------+
+|                            Application Layer                                      |
+|                  (Researcher impact dashboards, analytics)                        |
++-----------------------------------------------------------------------------------+
