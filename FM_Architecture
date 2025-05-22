@@ -1,0 +1,69 @@
++-----------------------------------------------------------------------------------+
+|                     Continuous Data Integration Layer                             |
++--------+------------------+-----------------+-------------------------------------+
+         |                  |                 |
+         |                  |                 |
+         v                  v                 v
++---------------+   +---------------+  +-----------------------------+
+| SemanticScholar|  | Figshare API  |  | Additional Data Repositories|
++---------------+   +---------------+  +-----------------------------+
+         |                  |                 |
+         v                  v                 v
++-----------------+-----------------+-----------------------+
+|                  Unified Data Ingestion                   |
+|             (Standardized Data Representation)            |
++--------------------------+--------------------------------+
+                           |
+                           v
++-----------------------------------------------------------+
+|            Scalable Foundation Knowledge Graph            |
+|                      (NetworkX / Neo4j)                   |
++-----------------------------------------------------------+
+|                         Nodes                             |
+| - Researchers                                             |
+| - Papers                                                  |
+| - Datasets                                                |
+| - Institutions                                            |
++-----------------------------------------------------------+
+|                        Relationships                      |
+| - Authorship                                              |
+| - Citations                                               |
+| - Collaborations                                          |
+| - Data Sharing                                            |
+| - Institutional affiliations                              |
++-----------------------------------------------------------+
+                           |
++--------------------------+--------------------------+
+|                                                     |
+v                                                     v
++---------------------------+          +-----------------------------------+
+|    Incremental Updates    |          |    Graph Embedding Computation    |
+| - Real-time Data Fetching |          |  (Abstracts, titles, metadata)    |
+| - Node/Edge updates       |          |     NLP & Machine Learning        |
++---------------------------+          +-----------------------------------+
+                      |                     |
+                      v                     v
++-------------------------------+-------------------------------+
+|                  Metrics Computation Layer                    |
++---------------+---------------+-------------------------------+
+| Structural    | Semantic      | Data Sharing & Update Metrics |
++---------------+---------------+-------------------------------+
+| Connectivity  | Similarity    | Integration Rate              |
+| Centrality    | Completeness  | Centrality Shift              |
+| PageRank      | Coverage      | Temporal Consistency          |
+| Clustering    | Diversity     | Data-sharing index            |
++---------------+---------------+-------------------------------+
+                      |
+                      v
++---------------------------------------------------------------+
+|                       Dynamic S Index                         |
+|   (Continuous function of the evolving knowledge graph)       |
++---------------------------------------------------------------+
+                      |
+                      v
++---------------------------------------------------------------+
+|                Application Layer & Analytics                  |
+| - Research Impact Dashboards                                  |
+| - Real-time metrics tracking                                  |
+| - Strategic insights generation                               |
++---------------------------------------------------------------+
