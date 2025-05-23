@@ -73,6 +73,11 @@ python s_index.py
  
 	- Knowledge Update Score: 0.45
 
+**Detailed reading:**
+1. [Foundation model architecture](FM_Architecture).
+2. ["The carrot effect"](carrot_effect): Why will it be adopted?
+3. [Code (Python) Implementation](s-index.py).
+4. [In-depth readme on the Python code architecture](in-depth_readme.md) and the associated [code architecture overview](sage_k_script_architecture.txt).
 
 📜 **License** 
 
