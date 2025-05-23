@@ -195,8 +195,9 @@
                     <ul class="list-disc list-inside text-xs text-gray-600 space-y-1">
                         <li>This is a front-end simulation. No Python backend.</li>
                         <li>✨ AI generation uses Gemini API.
-                            For **local use**, paste your Gemini API Key into the script.
-                            For **Vercel deployment**, ensure the `VERCEL_GEMINI_API_KEY` environment variable is set in your Vercel project settings AND that your deployment setup makes this variable accessible to the client-side `window` object (e.g., via a build script, serverless function, or by manually inserting the key into this HTML before deploying if using simple static hosting).
+                            For **local use**, paste your Gemini API Key into the script where it says `YOUR_GEMINI_API_KEY_HERE`.
+                            For **Vercel deployment**: The easiest way for this static HTML demo is to **manually replace `YOUR_GEMINI_API_KEY_HERE` with your actual key in this HTML file *before* deploying to Vercel.**
+                            Alternatively, if you have a more complex Vercel setup (e.g., using a framework or build scripts), ensure the `VERCEL_GEMINI_API_KEY` environment variable (set in Vercel project settings) is made accessible to the client-side `window` object.
                         </li>
                         <li>Graph visualization uses vis.js. May become slow with many nodes/edges.</li>
                         <li>**Semantic Similarity** & **Structural Metrics** are heavily simplified.</li>
@@ -432,26 +433,36 @@
         logActivity(`✨ AI: Generating ${type} for prompt: "${promptText.substring(0,50)}..."`);
         
         let apiKeyToUse = "";
+        // Attempt to get API key from window object (for Vercel env var injection)
         const vercelApiKey = typeof window !== 'undefined' ? window.VERCEL_GEMINI_API_KEY : undefined;
 
-        if (vercelApiKey) {
+        if (vercelApiKey && vercelApiKey.trim() !== "") {
             apiKeyToUse = vercelApiKey;
             logActivity("Using API Key from Vercel environment variable (window.VERCEL_GEMINI_API_KEY).");
         } else {
             // Fallback for local development or if Vercel env var isn't exposed to window.
-            apiKeyToUse = "YOUR_GEMINI_API_KEY_HERE"; // <<< PASTE YOUR API KEY HERE FOR LOCAL/MANUAL VERCEL
-            if (apiKeyToUse !== "YOUR_GEMINI_API_KEY_HERE" && apiKeyToUse !== "") { // Check if it was actually changed
+            // IMPORTANT: For local development OR if deploying to Vercel without a window injection method,
+            // you MUST replace "YOUR_GEMINI_API_KEY_HERE" with your actual Gemini API key.
+            apiKeyToUse = "YOUR_GEMINI_API_KEY_HERE"; 
+            
+            if (apiKeyToUse !== "YOUR_GEMINI_API_KEY_HERE" && apiKeyToUse.trim() !== "") {
                 logActivity("Using hardcoded API Key (intended for local development or manual Vercel setup).");
+            } else {
+                 // This case means the placeholder is still there, or it's empty.
+                 logActivity("Warning: Hardcoded API Key is still the placeholder or empty.");
             }
         }
 
-        if (apiKeyToUse === "YOUR_GEMINI_API_KEY_HERE" || !apiKeyToUse) {
-            const errorMsg = "Gemini API Key is missing or not configured. " +
-                             "1. For local use, paste your API key into the script. " +
-                             "2. For Vercel, ensure the VERCEL_GEMINI_API_KEY environment variable is set in Vercel project settings AND made available to the client-side 'window' object (e.g., via build script, serverless function, or by manually inserting the key into this HTML before deploying if using simple static hosting). " +
-                             "Currently, no key is available.";
+        // Final check if a key was actually resolved
+        if (apiKeyToUse === "YOUR_GEMINI_API_KEY_HERE" || !apiKeyToUse || apiKeyToUse.trim() === "") {
+            const errorMsg = "CRITICAL: Gemini API Key is MISSING or NOT CONFIGURED. \n\n" +
+                             "Instructions:\n" +
+                             "1. FOR LOCAL USE: Manually paste your Gemini API key into the script where it says 'YOUR_GEMINI_API_KEY_HERE'.\n" +
+                             "2. FOR VERCEL DEPLOYMENT: The simplest method for this static HTML demo is to MANUALLY PASTE your API key into the script (same as local use) BEFORE deploying. \n" +
+                             "   Alternatively, if you have a more advanced Vercel setup, ensure your VERCEL_GEMINI_API_KEY environment variable (set in Vercel project settings) is correctly made available to the client-side 'window' object. This is NOT automatic for plain HTML files on Vercel.\n\n" +
+                             "AI features will not work until a valid API key is provided.";
             logActivity(`✨ AI Error: ${errorMsg}`, true);
-            alert(errorMsg);
+            alert(errorMsg); // Make this alert very prominent
             aiLoadingIndicator.classList.add('hidden');
             return null;
         }
