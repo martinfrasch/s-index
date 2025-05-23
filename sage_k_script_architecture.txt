@@ -1,0 +1,85 @@
+---
+
+## Schema Diagram (`sage_k_script_architecture.txt`)
+
+This text-based schema diagram outlines the architecture of the `s_index.py` script:
+
+```text
++-----------------------------------------------------------------------------------+
+|                      SAGE-K Python Script Execution Architecture                  |
++-----------------------------------------------------------------------------------+
+                                        |
+                                        v
++-----------------------------------------------------------------------------------+
+|                      Input Data (Simulated in Script)                             |
+|  - Paper Data (ID, abstract, citations, researcher_id, year)                      |
+|  - Dataset Data (ID, title, description, researcher_id, year)                     |
++-----------------------------------------------------------------------------------+
+                                        |
+                                        v
++-----------------------------------------------------------------------------------+
+|                      Global Model Initialization                                  |
+|  - BioMedLM Tokenizer & Model (from `transformers`, e.g., PubMedBERT)             |
+|  - spaCy NLP Model (`spacy.load`, optional, for relation extraction)              |
++-----------------------------------------------------------------------------------+
+                                        |
+                                        v
++-----------------------------------------------------------------------------------+
+|                      Knowledge Graph Builder (`KnowledgeGraphBuilder`)              |
+|  Internal State: `graph` (NetworkX MultiDiGraph), `previous_graph`                |
+|  -------------------------------------------------------------------------------  |
+|  Core Methods:                                                                  |
+|    - `add_paper(data)` -> calls `get_biomedlm_embedding(abstract)`                |
+|    - `add_dataset(data)` -> calls `get_biomedlm_embedding(description)`           |
+|    - `create_relationship(src, tgt, type)`                                      |
+|    - `update_node(id, data)`                                                      |
+|    - `extract_relations_from_abstract_spacy(text, id)` (uses spaCy)             |
+|  -------------------------------------------------------------------------------  |
+|  Node Attributes Examples: `type` ('paper'/'dataset'), `biomedlm_embedding`,      |
+|                          `title`, `year`, `researcher_id`                         |
+|  Edge Attributes Examples: `type` ('CITES', 'SUPPORTS', 'HAS_DATASET')            |
++-----------------------------------------------------------------------------------+
+                         |              |              |              |
+                         v              v              v              v
++------------------------+  +---------------------+  +-----------------------+  +-----------------------+
+|   Structural Metrics   |  |   Semantic Metrics  |  | Knowledge Update Mets |  | Data Sharing Metrics  |
+| (`calc_struct_mets`)   |  | (`calc_sem_mets`)   |  | (`calc_know_upd_mets`)|  | (`calc_data_sha_mets`)|
+|------------------------|  |---------------------|  |-----------------------|  |-----------------------|
+| - Input: Graph         |  | - Input: Graph      |  | - Input: Graph,       |  | - Input: Graph,       |
+| - Metrics:             |  |   (node embeddings) |  |           Prev. Graph |  |           researcher_id|
+|   - Connectivity       |  | - Relies on:        |  | - Metrics:            |  | - Metrics:            |
+|   - Centrality (Deg)   |  | `calc_sem_sim_from_emb`|  |   - Integration Rate  |  |   - Dataset Count     |
+|   - PageRank           |  |   (cosine sim)      |  |   - Centrality Shift  |  |     (normalized)      |
+|   - Betweenness        |  | - Metrics:          |  |   - Temporal Consist. |  |                       |
+|   - Clustering         |  |   - Abstract Sim.   |  |                       |  |                       |
+| - Output: avg_struct_sc|  |   - Completeness    |  | - Output: avg_upd_sc  |  | - Output: ds_score,   |
+|                        |  | - Output: avg_sem_sc|  |                       |  |            ds_count |
++------------------------+  +---------------------+  +-----------------------+  +-----------------------+
+                         |              |              |              |
+                         +--------------+--------------+--------------+
+                                        |
+                                        v
++-----------------------------------------------------------------------------------+
+|                      S-Index Aggregation (`calculate_s_index`)                    |
+|  Inputs: avg_struct_score, avg_sem_score, avg_upd_score, data_sharing_score     |
+|  Formula: 100 * (0.40*Struct + 0.30*Sem + 0.15*Update + 0.15*DataShare) |
+|  Output: Final S-Index (0-100)                                                  |
++-----------------------------------------------------------------------------------+
+                                        |
+                                        v
++-----------------------------------------------------------------------------------+
+|                      Output / Display (Console Print)                             |
+|  - S-Index Value                                                                  |
+|  - Component Scores (Structural, Semantic, Update, Data Sharing)                  |
+|  - Dataset Count                                                                  |
++-----------------------------------------------------------------------------------+
+
++-----------------------------------------------------------------------------------+
+|   Separate Block: Graph Transformer Components (PyTorch `nn.Module`s)             |
+|   (Part of the script, for advanced/future use; not in direct S-Index calculation flow)|
+|   - `GraphTransformer(dim, heads, depth)`                                         |
+|   - `TransformerEncoder(dim, heads, depth)`                                       |
+|   - `GraphAttentionNetwork(dim, heads)`                                           |
+|   Purpose: Advanced graph learning, node/link prediction, impact analysis.        |
+|   Inputs: Node features (e.g., BioMedLM embeddings as tensors), Edge index tensor.|
++-----------------------------------------------------------------------------------+
