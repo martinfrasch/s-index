@@ -98,7 +98,7 @@
 <body class="p-4 md:p-8">
     <div class="max-w-6xl mx-auto">
         <header class="mb-8 text-center">
-            <img src="sage_k_logo.jpg" alt="SAGE-K Logo" class="w-32 h-32 mx-auto mb-4 rounded-full shadow-lg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/DBEAFE/4F46E5?text=SAGE-K'; this.alt='SAGE-K Placeholder Logo';">
+            <img src="sage_k_logo.png" alt="SAGE-K Logo" class="w-32 h-32 mx-auto mb-4 rounded-full shadow-lg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/DBEAFE/4F46E5?text=SAGE-K'; this.alt='SAGE-K Placeholder Logo';">
             <h1 class="text-4xl font-bold text-gray-800">SAGE-K S-Index Interactive Demo</h1>
             <p class="text-lg text-gray-600 mt-2">Explore the S-Index with ✨ AI-Powered Content Generation & Graph Visualization.</p>
         </header>
@@ -194,7 +194,10 @@
                     <h2 class="section-title">Notes & Simplifications</h2>
                     <ul class="list-disc list-inside text-xs text-gray-600 space-y-1">
                         <li>This is a front-end simulation. No Python backend.</li>
-                        <li>✨ AI generation uses Gemini API. For local use, paste your API Key. For Vercel, configure env var.</li>
+                        <li>✨ AI generation uses Gemini API.
+                            For **local use**, paste your Gemini API Key into the script.
+                            For **Vercel deployment**, ensure the `VERCEL_GEMINI_API_KEY` environment variable is set in your Vercel project settings AND that your deployment setup makes this variable accessible to the client-side `window` object (e.g., via a build script, serverless function, or by manually inserting the key into this HTML before deploying if using simple static hosting).
+                        </li>
                         <li>Graph visualization uses vis.js. May become slow with many nodes/edges.</li>
                         <li>**Semantic Similarity** & **Structural Metrics** are heavily simplified.</li>
                     </ul>
@@ -238,7 +241,7 @@
     const datasetIdInput = document.getElementById('datasetId');
     const datasetTitleInput = document.getElementById('datasetTitle');
     const datasetDescriptionInput = document.getElementById('datasetDescription');
-    const datasetAssociatedPaperIdInput = document.getElementById('datasetAssociatedPaperId'); // New
+    const datasetAssociatedPaperIdInput = document.getElementById('datasetAssociatedPaperId'); 
     const datasetYearInput = document.getElementById('datasetYear');
     const addDatasetBtn = document.getElementById('addDatasetBtn');
     const generateDescriptionBtn = document.getElementById('generateDescriptionBtn');
@@ -265,7 +268,7 @@
                 width: 2, 
                 arrows: 'to', 
                 smooth: { type: 'continuous' },
-                font: { align: 'top', size: 10, color: '#71717a' } // For edge labels
+                font: { align: 'top', size: 10, color: '#71717a' } 
             }, 
             groups: {
                 paper: { color: { background: '#60a5fa', border: '#2563eb' }, shape: 'ellipse' }, 
@@ -329,13 +332,13 @@
             const edgeId = `${edgeData.source}_${edgeData.target}_${edgeData.type}_${visEdges.length + 1}`; 
             console.log(`Attempting to add edge to vis.js: ID=${edgeId}, From=${edgeData.source}, To=${edgeData.target}, Type=${edgeData.type}`);
             
-            let edgeColor = '#a1a1aa'; // Default CITES color (gray)
+            let edgeColor = '#a1a1aa'; 
             let edgeDashes = false;
             if (edgeData.type === 'HAS_DATASET') {
-                edgeColor = '#10b981'; // Green for dataset links
-                edgeDashes = [5, 5]; // Dashed line for dataset links
+                edgeColor = '#10b981'; 
+                edgeDashes = [5, 5]; 
             } else if (edgeData.type !== 'CITES') {
-                edgeColor = '#4f46e5'; // Indigo for other custom types
+                edgeColor = '#4f46e5'; 
             }
 
             const addedIds = visEdges.add({ 
@@ -344,7 +347,7 @@
                 to: edgeData.target, 
                 arrows: 'to',
                 label: edgeData.type === 'CITES' ? '' : edgeData.type, 
-                color: { color: edgeColor, hover: edgeColor }, // Keep hover color same for simplicity or adjust
+                color: { color: edgeColor, hover: edgeColor }, 
                 dashes: edgeDashes 
             });
             console.log("visEdges.add result (added IDs):", addedIds);
@@ -402,7 +405,7 @@
             return false; 
         }
         
-        if (!targetExists && type === 'CITES') { // Only auto-create stubs for CITES
+        if (!targetExists && type === 'CITES') { 
             const stubNode = { id: targetId, type: 'paper_stub', title: `Stub: ${targetId}`, researcherId: 'unknown' };
             addNodeToGraph(stubNode); 
             logActivity(`Created stub node for cited paper: ${targetId}`);
@@ -427,15 +430,30 @@
     async function generateWithGemini(promptText, type) {
         aiLoadingIndicator.classList.remove('hidden');
         logActivity(`✨ AI: Generating ${type} for prompt: "${promptText.substring(0,50)}..."`);
+        
         let apiKeyToUse = "";
-        if (typeof window !== 'undefined' && window.VERCEL_GEMINI_API_KEY) {
-            apiKeyToUse = window.VERCEL_GEMINI_API_KEY;
-            logActivity("Using API Key from Vercel environment variable (window.VERCEL_GEMINI_API_KEY).");
-        } else { apiKeyToUse = "YOUR_GEMINI_API_KEY_HERE"; }
+        const vercelApiKey = typeof window !== 'undefined' ? window.VERCEL_GEMINI_API_KEY : undefined;
 
-        if (apiKeyToUse === "YOUR_GEMINI_API_KEY_HERE" || apiKeyToUse === "") {
-            const errorMsg = "Gemini API Key is missing. For local use, paste API key. For Vercel, set VERCEL_GEMINI_API_KEY.";
-            logActivity(`✨ AI Error: ${errorMsg}`, true); alert(errorMsg); aiLoadingIndicator.classList.add('hidden'); return null;
+        if (vercelApiKey) {
+            apiKeyToUse = vercelApiKey;
+            logActivity("Using API Key from Vercel environment variable (window.VERCEL_GEMINI_API_KEY).");
+        } else {
+            // Fallback for local development or if Vercel env var isn't exposed to window.
+            apiKeyToUse = "YOUR_GEMINI_API_KEY_HERE"; // <<< PASTE YOUR API KEY HERE FOR LOCAL/MANUAL VERCEL
+            if (apiKeyToUse !== "YOUR_GEMINI_API_KEY_HERE" && apiKeyToUse !== "") { // Check if it was actually changed
+                logActivity("Using hardcoded API Key (intended for local development or manual Vercel setup).");
+            }
+        }
+
+        if (apiKeyToUse === "YOUR_GEMINI_API_KEY_HERE" || !apiKeyToUse) {
+            const errorMsg = "Gemini API Key is missing or not configured. " +
+                             "1. For local use, paste your API key into the script. " +
+                             "2. For Vercel, ensure the VERCEL_GEMINI_API_KEY environment variable is set in Vercel project settings AND made available to the client-side 'window' object (e.g., via build script, serverless function, or by manually inserting the key into this HTML before deploying if using simple static hosting). " +
+                             "Currently, no key is available.";
+            logActivity(`✨ AI Error: ${errorMsg}`, true);
+            alert(errorMsg);
+            aiLoadingIndicator.classList.add('hidden');
+            return null;
         }
 
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyToUse}`;
@@ -551,11 +569,11 @@
             description: datasetDescriptionInput.value.trim(), year: parseInt(datasetYearInput.value) || new Date().getFullYear(),
             type: 'dataset', researcherId: currentResearcherId, embedding: getMockEmbedding(datasetDescriptionInput.value.trim())
         };
-        const associatedPaperId = datasetAssociatedPaperIdInput.value.trim(); // Get associated paper ID
+        const associatedPaperId = datasetAssociatedPaperIdInput.value.trim(); 
 
         if (!dataset.id) { alert("Dataset ID is required!"); return; }
         if (addNodeToGraph(dataset)) { 
-            if (associatedPaperId && knowledgeGraph.nodes.has(associatedPaperId)) { // Check if paper exists
+            if (associatedPaperId && knowledgeGraph.nodes.has(associatedPaperId)) { 
                 addEdgeToGraph(associatedPaperId, dataset.id, 'HAS_DATASET');
             } else if (associatedPaperId) {
                 logActivity(`Warning: Associated paper ID '${associatedPaperId}' not found. Dataset '${dataset.id}' added without paper link.`, true);
@@ -572,7 +590,7 @@
     function clearDatasetInputs() {
         datasetIdInput.value = `dataset_${String(Math.floor(Math.random()*1000)).padStart(3, '0')}`;
         datasetTitleInput.value = ''; datasetDescriptionInput.value = '';
-        datasetAssociatedPaperIdInput.value = ''; // Clear associated paper ID field
+        datasetAssociatedPaperIdInput.value = ''; 
     }
 
     // --- Metric Calculation Simulations (Simplified) ---
