@@ -1,0 +1,6 @@
+networkx
+numpy
+spacy
+torch
+torch_geometric
+transformers
