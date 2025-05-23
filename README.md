@@ -33,6 +33,8 @@ The S Index rewards data sharing explicitly:
 - Better chances for grants, collaboration, and promotion.
 - Real-time feedback via dashboards showcasing how actions (like dataset sharing) improve the score.
 
+**[DEMO](https://s-index.vercel.app)**
+
 ⚙️ **Architecture Overview**
 
 **Data Sources → Unified Graph → Metrics Engine → S Index → Dashboards**
