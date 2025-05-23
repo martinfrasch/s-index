@@ -194,10 +194,8 @@
                     <h2 class="section-title">Notes & Simplifications</h2>
                     <ul class="list-disc list-inside text-xs text-gray-600 space-y-1">
                         <li>This is a front-end simulation. No Python backend.</li>
-                        <li>✨ AI generation uses Gemini API.
-                            For **local use**, paste your Gemini API Key into the script where it says `YOUR_GEMINI_API_KEY_HERE`.
-                            For **Vercel deployment**: The easiest way for this static HTML demo is to **manually replace `YOUR_GEMINI_API_KEY_HERE` with your actual key in this HTML file *before* deploying to Vercel.**
-                            Alternatively, if you have a more complex Vercel setup (e.g., using a framework or build scripts), ensure the `VERCEL_GEMINI_API_KEY` environment variable (set in Vercel project settings) is made accessible to the client-side `window` object.
+                        <li>✨ AI generation uses Gemini API via a Vercel serverless function proxy.
+                            Ensure the `VERCEL_GEMINI_API_KEY` environment variable is correctly set in your Vercel project settings for the `api/generate-text.js` function to use.
                         </li>
                         <li>Graph visualization uses vis.js. May become slow with many nodes/edges.</li>
                         <li>**Semantic Similarity** & **Structural Metrics** are heavily simplified.</li>
@@ -427,59 +425,34 @@
         return Math.min(0.1 + (text.length / 1000), 0.3); 
     }
 
-    // --- Gemini API Call ---
+    // --- Gemini API Call (Client-side calls Vercel Serverless Function) ---
     async function generateWithGemini(promptText, type) {
         aiLoadingIndicator.classList.remove('hidden');
-        logActivity(`✨ AI: Generating ${type} for prompt: "${promptText.substring(0,50)}..."`);
+        logActivity(`✨ AI: Sending request to Vercel function for ${type} generation...`);
         
-        let apiKeyToUse = "";
-        // Attempt to get API key from window object (for Vercel env var injection)
-        const vercelApiKey = typeof window !== 'undefined' ? window.VERCEL_GEMINI_API_KEY : undefined;
-
-        if (vercelApiKey && vercelApiKey.trim() !== "") {
-            apiKeyToUse = vercelApiKey;
-            logActivity("Using API Key from Vercel environment variable (window.VERCEL_GEMINI_API_KEY).");
-        } else {
-            // Fallback for local development or if Vercel env var isn't exposed to window.
-            // IMPORTANT: For local development OR if deploying to Vercel without a window injection method,
-            // you MUST replace "YOUR_GEMINI_API_KEY_HERE" with your actual Gemini API key.
-            apiKeyToUse = "YOUR_GEMINI_API_KEY_HERE"; 
-            
-            if (apiKeyToUse !== "YOUR_GEMINI_API_KEY_HERE" && apiKeyToUse.trim() !== "") {
-                logActivity("Using hardcoded API Key (intended for local development or manual Vercel setup).");
-            } else {
-                 // This case means the placeholder is still there, or it's empty.
-                 logActivity("Warning: Hardcoded API Key is still the placeholder or empty.");
-            }
-        }
-
-        // Final check if a key was actually resolved
-        if (apiKeyToUse === "YOUR_GEMINI_API_KEY_HERE" || !apiKeyToUse || apiKeyToUse.trim() === "") {
-            const errorMsg = "CRITICAL: Gemini API Key is MISSING or NOT CONFIGURED. \n\n" +
-                             "Instructions:\n" +
-                             "1. FOR LOCAL USE: Manually paste your Gemini API key into the script where it says 'YOUR_GEMINI_API_KEY_HERE'.\n" +
-                             "2. FOR VERCEL DEPLOYMENT: The simplest method for this static HTML demo is to MANUALLY PASTE your API key into the script (same as local use) BEFORE deploying. \n" +
-                             "   Alternatively, if you have a more advanced Vercel setup, ensure your VERCEL_GEMINI_API_KEY environment variable (set in Vercel project settings) is correctly made available to the client-side 'window' object. This is NOT automatic for plain HTML files on Vercel.\n\n" +
-                             "AI features will not work until a valid API key is provided.";
-            logActivity(`✨ AI Error: ${errorMsg}`, true);
-            alert(errorMsg); // Make this alert very prominent
-            aiLoadingIndicator.classList.add('hidden');
-            return null;
-        }
-
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyToUse}`;
-        let chatHistory = [{ role: "user", parts: [{ text: promptText }] }];
-        const payload = { contents: chatHistory };
+        // The client now calls our OWN API endpoint on Vercel
+        // This endpoint is defined by the `api/generate-text.js` file.
+        const vercelApiUrl = "/api/generate-text"; 
 
         try {
-            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const response = await fetch(vercelApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ promptText: promptText }) // Send prompt in the body
+            });
+
+            const result = await response.json(); // Always try to parse JSON
+
             if (!response.ok) {
-                let errorDetail = `HTTP error! Status: ${response.status}`;
-                try { const errorData = await response.json(); errorDetail = `API Error (${response.status}): ${errorData.error?.message || JSON.stringify(errorData.error) || response.statusText}`; } 
-                catch (e) { errorDetail = `API Request Failed. Status: ${response.status} ${response.statusText}. No JSON error.`;}
-                throw new Error(errorDetail);
+                // Error came from our serverless function or its call to Gemini
+                const errorMessage = result.error || `Request to Vercel function failed with status ${response.status}`;
+                console.error("Error from Vercel function:", result);
+                throw new Error(errorMessage);
             }
-            const result = await response.json(); console.log("Gemini API Full Response:", result); 
+            
+            // Assuming the serverless function forwards the Gemini API's structure
+            console.log("Response from Vercel function (forwarded from Gemini):", result); 
+
             if (result.candidates && result.candidates.length > 0) {
                 const candidate = result.candidates[0];
                 if (candidate.finishReason && candidate.finishReason !== "STOP" && candidate.finishReason !== "MAX_TOKENS") {
@@ -496,14 +469,18 @@
                         logActivity(`✨ AI: Generated ${type}, but result was empty. Refine prompt?`, true);
                         aiLoadingIndicator.classList.add('hidden'); return ""; 
                     }
-                    logActivity(`✨ AI: Successfully generated ${type}.`); aiLoadingIndicator.classList.add('hidden'); return generatedText;
+                    logActivity(`✨ AI: Successfully generated ${type} via Vercel function.`); 
+                    aiLoadingIndicator.classList.add('hidden'); 
+                    return generatedText;
                 }
             }
-            console.error("Unexpected API response structure or no text found:", result);
-            throw new Error("No valid content generated or unexpected API response structure. Check console.");
+            console.error("Unexpected API response structure from Vercel function or no text found:", result);
+            throw new Error("No valid content generated or unexpected API response structure from Vercel function. Check console.");
         } catch (error) {
-            logActivity(`✨ AI Error: ${error.message}`, true); console.error("Gemini API Call Error Object:", error); 
-            aiLoadingIndicator.classList.add('hidden'); alert(`Failed to generate content. Check log/console. Error: ${error.message.substring(0, 200)}`); 
+            logActivity(`✨ AI Error (via Vercel function): ${error.message}`, true); 
+            console.error("Error calling Vercel function or processing its response:", error); 
+            aiLoadingIndicator.classList.add('hidden'); 
+            alert(`Failed to generate content via Vercel function. Check log/console. Error: ${error.message.substring(0, 200)}`); 
             return null;
         }
     }
