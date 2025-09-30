@@ -3,682 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAGE-K S-Index Demo with AI & Graph</title>
+    <title>QIC-Index: A Conceptual Explainer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Tailwind gray-100 */
         }
-        .metric-card {
-            background-color: white;
-            border-radius: 0.5rem; /* Tailwind rounded-lg */
-            padding: 1.5rem; /* Tailwind p-6 */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tailwind shadow-md */
+        .slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #2563eb;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
         }
-        .s-index-display {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Indigo to Purple gradient */
-            color: white;
-            border-radius: 0.75rem; /* Tailwind rounded-xl */
-            padding: 2rem; /* Tailwind p-8 */
-            text-align: center;
+        input[type='range']::-webkit-slider-thumb {
+            @apply slider-thumb;
         }
-        .s-index-value {
-            font-size: 4rem; /* Tailwind text-6xl */
-            font-weight: 700; /* Tailwind font-bold */
-            line-height: 1;
+        input[type='range']::-moz-range-thumb {
+            @apply slider-thumb;
         }
-        .component-score {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 0.375rem; /* Tailwind rounded-md */
-            padding: 0.5rem 1rem; /* Tailwind p-2 px-4 */
-            margin-top: 0.5rem; /* Tailwind mt-2 */
-            font-size: 0.875rem; /* Tailwind text-sm */
-        }
-        input, select, textarea {
-            border-radius: 0.375rem; /* Tailwind rounded-md */
-            border: 1px solid #d1d5db; /* Tailwind border-gray-300 */
-            padding: 0.5rem 0.75rem; /* Tailwind px-3 py-2 */
-            width: 100%;
-        }
-        button {
-            border-radius: 0.375rem; /* Tailwind rounded-md */
-            padding: 0.625rem 1.25rem; /* Tailwind px-5 py-2.5 */
-            font-weight: 500; /* Tailwind font-medium */
-            transition: background-color 0.2s;
-        }
-        .btn-primary {
-            background-color: #4f46e5; /* Tailwind indigo-600 */
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #4338ca; /* Tailwind indigo-700 */
-        }
-        .btn-ai {
-            background-color: #f59e0b; /* Tailwind amber-500 */
-            color: white;
-            padding: 0.375rem 0.75rem; /* Tailwind px-3 py-1.5 */
-            font-size: 0.875rem; /* text-sm */
-            margin-top: 0.25rem; /* Tailwind mt-1 */
-        }
-        .btn-ai:hover {
-            background-color: #d97706; /* Tailwind amber-600 */
-        }
-        .section-title {
-            font-size: 1.25rem; /* Tailwind text-xl */
-            font-weight: 600; /* Tailwind font-semibold */
-            color: #1f2937; /* Tailwind gray-800 */
-            margin-bottom: 1rem; /* Tailwind mb-4 */
-            border-bottom: 2px solid #e5e7eb; /* Tailwind border-gray-200 */
-            padding-bottom: 0.5rem; /* Tailwind pb-2 */
-        }
-        .loading-indicator {
-            font-size: 0.875rem;
-            color: #4f46e5; /* Indigo */
-            padding: 0.5rem;
-            text-align: center;
-        }
-        /* Graph container style */
-        #knowledgeGraphVisualization {
-            width: 100%;
-            height: 400px; /* Adjust height as needed */
-            border: 1px solid #e5e7eb; /* Tailwind gray-200 */
-            border-radius: 0.5rem;
-            background-color: #f9fafb; /* Tailwind gray-50 */
-        }
-        /* Custom scrollbar for log */
-        .log-container::-webkit-scrollbar { width: 8px; }
-        .log-container::-webkit-scrollbar-track { background: #e5e7eb; border-radius: 10px; }
-        .log-container::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 10px; }
-        .log-container::-webkit-scrollbar-thumb:hover { background: #6b7280; }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="max-w-6xl mx-auto">
-        <header class="mb-8 text-center">
-            <img src="sage_k_logo.png" alt="SAGE-K Logo" class="w-32 h-32 mx-auto mb-4 rounded-full shadow-lg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/DBEAFE/4F46E5?text=SAGE-K'; this.alt='SAGE-K Placeholder Logo';">
-            <h1 class="text-4xl font-bold text-gray-800">SAGE-K S-Index Interactive Demo</h1>
-            <p class="text-lg text-gray-600 mt-2">Explore the S-Index with ✨ AI-Powered Content Generation & Graph Visualization.</p>
+<body class="bg-slate-50 text-slate-800">
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-900">The QIC-Index</h1>
+            <p class="text-lg text-slate-600 mt-2">A Conceptual Explainer for the Data-Centric Metric</p>
         </header>
 
+        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg mb-8" role="alert">
+            <p class="font-bold">Note on this Tool</p>
+            <p>This page provides a conceptual demonstration of the QIC-Index framework. It uses hypothetical inputs to show how the score is calculated and does not connect to live data. This tool is a supplement to our manuscript, <a href="#" class="font-medium underline hover:text-yellow-800">[Link to Your Manuscript Here]</a>.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-center bg-white p-6 rounded-2xl shadow-lg border border-slate-200 mb-8">
+            <div class="text-center text-2xl font-semibold text-slate-700">s<sub class="text-lg">j</sub></div>
+            <div class="text-center text-3xl font-bold text-slate-500">=</div>
+            <div class="text-center">
+                <span class="text-2xl font-semibold text-blue-600">Q<sub class="text-lg">j</sub></span>
+                <span class="text-2xl font-bold text-slate-400 mx-2">×</span>
+                <span class="text-2xl font-semibold text-green-600">I<sub class="text-lg">j</sub></span>
+                <span class="text-2xl font-bold text-slate-400 mx-2">×</span>
+                <span class="text-2xl font-semibold text-purple-600">C<sub class="text-lg">j</sub></span>
+            </div>
+            <div id="finalScoreContainer" class="text-center bg-slate-100 p-4 rounded-xl">
+                 <p class="text-sm font-medium text-slate-500">Final Score (s<sub class="text-xs">j</sub>)</p>
+                 <p id="finalScore" class="text-4xl font-bold text-slate-800">1.00</p>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-1 space-y-6">
-                <div class="metric-card">
-                    <h2 class="section-title">Researcher</h2>
-                    <label for="researcherId" class="block text-sm font-medium text-gray-700 mb-1">Researcher ID:</label>
-                    <input type="text" id="researcherId" value="researcher_Alpha" class="w-full mb-3">
-                    <p class="text-xs text-gray-500">Enter an ID to track S-Index for a specific researcher.</p>
-                </div>
-
-                <div class="metric-card">
-                    <h2 class="section-title">Add Paper</h2>
-                    <div class="space-y-3">
-                        <div><label for="paperId" class="block text-sm font-medium text-gray-700">Paper ID:</label><input type="text" id="paperId" placeholder="e.g., paper_001"></div>
-                        <div><label for="paperTitle" class="block text-sm font-medium text-gray-700">Title:</label><input type="text" id="paperTitle" placeholder="Paper Title"></div>
-                        <div>
-                            <label for="paperAbstract" class="block text-sm font-medium text-gray-700">Abstract/Keywords:</label>
-                            <textarea id="paperAbstract" rows="3" placeholder="Enter keywords or a brief abstract manually, or generate with AI."></textarea>
-                            <div class="flex space-x-2 mt-1">
-                                <button id="generateAbstractBtn" class="btn-ai w-1/2">✨ Gen Abstract</button>
-                                <button id="extractKeywordsPaperBtn" class="btn-ai w-1/2">✨ Get Keywords</button>
-                            </div>
-                        </div>
-                        <div><label for="paperCitations" class="block text-sm font-medium text-gray-700">Citations (comma-separated IDs):</label><input type="text" id="paperCitations" placeholder="e.g., paper_A, paper_B"></div>
-                        <div><label for="paperYear" class="block text-sm font-medium text-gray-700">Year:</label><input type="number" id="paperYear" placeholder="YYYY" value="2023"></div>
-                        <button id="addPaperBtn" class="btn-primary w-full">Add Paper</button>
-                    </div>
-                </div>
-
-                <div class="metric-card">
-                    <h2 class="section-title">Add Dataset 🥕</h2>
-                    <div class="space-y-3">
-                        <div><label for="datasetId" class="block text-sm font-medium text-gray-700">Dataset ID:</label><input type="text" id="datasetId" placeholder="e.g., dataset_001"></div>
-                        <div><label for="datasetTitle" class="block text-sm font-medium text-gray-700">Title:</label><input type="text" id="datasetTitle" placeholder="Dataset Title"></div>
-                         <div>
-                            <label for="datasetDescription" class="block text-sm font-medium text-gray-700">Description/Keywords:</label>
-                            <textarea id="datasetDescription" rows="3" placeholder="Enter keywords or a brief description manually, or generate with AI."></textarea>
-                             <div class="flex space-x-2 mt-1">
-                                <button id="generateDescriptionBtn" class="btn-ai w-1/2">✨ Gen Desc</button>
-                                <button id="extractKeywordsDatasetBtn" class="btn-ai w-1/2">✨ Get Keywords</button>
-                            </div>
-                        </div>
-                        <div> <label for="datasetAssociatedPaperId" class="block text-sm font-medium text-gray-700">Associated Paper ID (Optional):</label>
-                            <input type="text" id="datasetAssociatedPaperId" placeholder="e.g., paper_001">
-                        </div>
-                        <div><label for="datasetYear" class="block text-sm font-medium text-gray-700">Year:</label><input type="number" id="datasetYear" placeholder="YYYY" value="2023"></div>
-                        <button id="addDatasetBtn" class="btn-primary w-full">Add Dataset</button>
-                    </div>
-                </div>
-                 <div id="aiLoadingIndicator" class="loading-indicator hidden">Generating... please wait.</div>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+                <h2 class="text-2xl font-bold mb-1">Quality (Q)</h2>
+                <p class="text-slate-600 mb-4 text-sm">Measures adherence to FAIR principles for data reuse.</p>
+                <label for="qualitySlider" class="flex justify-between items-center font-medium text-slate-700 mb-2">
+                    <span>FAIR Score</span>
+                    <span id="qualityValue" class="bg-blue-100 text-blue-800 text-sm font-semibold px-2.5 py-0.5 rounded-full">5.0</span>
+                </label>
+                <input id="qualitySlider" type="range" min="0" max="10" value="5" step="0.1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+            </div>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+                <h2 class="text-2xl font-bold mb-1">Impact (I)</h2>
+                <p class="text-slate-600 mb-4 text-sm">Measures actual scientific reuse (e.g., citations).</p>
+                <label for="impactSlider" class="flex justify-between items-center font-medium text-slate-700 mb-2">
+                    <span>Reuse Events</span>
+                    <span id="impactValue" class="bg-green-100 text-green-800 text-sm font-semibold px-2.5 py-0.5 rounded-full">10</span>
+                </label>
+                <input id="impactSlider" type="range" min="0" max="200" value="10" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
             </div>
 
-            <div class="lg:col-span-2 space-y-6">
-                <div class="s-index-display">
-                    <p class="text-xl font-medium mb-2">Current S-Index for <span id="displayResearcherId" class="font-bold">N/A</span></p>
-                    <div id="sIndexValue" class="s-index-value">0.00</div>
-                    <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                        <div class="component-score">Struct: <span id="structuralScore">0.00</span></div>
-                        <div class="component-score">Sem: <span id="semanticScore">0.00</span></div>
-                        <div class="component-score">Update: <span id="updateScore">0.00</span></div>
-                        <div class="component-score">Data 🥕: <span id="dataSharingScore">0.00</span> (<span id="datasetCount">0</span>)</div>
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+                <h2 class="text-2xl font-bold mb-1">Collaboration (C)</h2>
+                <p class="text-slate-600 mb-4 text-sm">Quantifies the breadth of the collaborative network.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label for="authorsSlider" class="flex justify-between items-center font-medium text-slate-700 mb-2">
+                            <span>Authors</span>
+                            <span id="authorsValue" class="bg-purple-100 text-purple-800 text-sm font-semibold px-2.5 py-0.5 rounded-full">3</span>
+                        </label>
+                        <input id="authorsSlider" type="range" min="1" max="50" value="3" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                     </div>
-                </div>
-
-                <div class="metric-card">
-                    <h2 class="section-title">Knowledge Graph Info</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                        <div><p class="text-gray-500 text-sm">Total Nodes</p><p id="graphNodes" class="text-2xl font-semibold text-indigo-600">0</p></div>
-                        <div><p class="text-gray-500 text-sm">Total Edges</p><p id="graphEdges" class="text-2xl font-semibold text-indigo-600">0</p></div>
-                        <div><p class="text-gray-500 text-sm">Papers / Datasets</p><p class="text-2xl font-semibold text-indigo-600"><span id="paperCount">0</span> / <span id="totalDatasetCount">0</span></p></div>
+                    <div>
+                         <label for="institutionsSlider" class="flex justify-between items-center font-medium text-slate-700 mb-2">
+                            <span>Institutions</span>
+                            <span id="institutionsValue" class="bg-purple-100 text-purple-800 text-sm font-semibold px-2.5 py-0.5 rounded-full">1</span>
+                        </label>
+                        <input id="institutionsSlider" type="range" min="1" max="20" value="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                     </div>
-                     <div class="mt-4">
-                        <h3 class="text-md font-semibold text-gray-700 mb-2">Nodes (Recent 5):</h3>
-                        <div id="nodeList" class="text-xs text-gray-600 max-h-24 overflow-y-auto p-2 border rounded-md bg-gray-50"></div>
-                    </div>
-                </div>
-                
-                <div class="metric-card">
-                    <h2 class="section-title">Knowledge Graph Visualization</h2>
-                    <div id="knowledgeGraphVisualization"></div>
-                </div>
-
-                <div class="metric-card">
-                    <h2 class="section-title">Activity Log</h2>
-                    <div id="activityLog" class="log-container h-48 overflow-y-auto text-sm space-y-1 pr-2">
-                        <p class="text-gray-500">No activity yet.</p>
-                    </div>
-                </div>
-                 <div class="metric-card">
-                    <h2 class="section-title">Notes & Simplifications</h2>
-                    <ul class="list-disc list-inside text-xs text-gray-600 space-y-1">
-                        <li>This is a front-end simulation. No Python backend.</li>
-                        <li>✨ AI generation uses Gemini API via a Vercel serverless function proxy.
-                            Ensure the `VERCEL_GEMINI_API_KEY` environment variable is correctly set in your Vercel project settings for the `api/generate-text.js` function to use.
-                        </li>
-                        <li>Graph visualization uses vis.js. May become slow with many nodes/edges.</li>
-                        <li>**Semantic Similarity** & **Structural Metrics** are heavily simplified.</li>
-                    </ul>
                 </div>
             </div>
         </div>
+
     </div>
 
-<script>
-    // --- S-Index Configuration ---
-    const STRUCTURAL_WEIGHT = 0.40;
-    const SEMANTIC_WEIGHT = 0.30;
-    const KNOWLEDGE_UPDATE_WEIGHT = 0.15;
-    const DATA_SHARING_WEIGHT = 0.15;
-    const TARGET_NODE_COUNT = 80000000; 
-    const TARGET_DATASET_COUNT_FOR_MAX_SCORE = 10;
+    <script>
+        const qualitySlider = document.getElementById('qualitySlider');
+        const impactSlider = document.getElementById('impactSlider');
+        const authorsSlider = document.getElementById('authorsSlider');
+        const institutionsSlider = document.getElementById('institutionsSlider');
 
-    // --- Application State ---
-    let knowledgeGraph = { nodes: new Map(), edges: [] };
-    let previousGraphState = { nodeCount: 0, edgeCount: 0 };
-    let activityLog = [];
-
-    // --- Vis.js Network State ---
-    let visNodes = new vis.DataSet([]);
-    let visEdges = new vis.DataSet([]);
-    let visNetwork = null;
-    const graphVisContainer = document.getElementById('knowledgeGraphVisualization');
-
-
-    // --- DOM Elements ---
-    const researcherIdInput = document.getElementById('researcherId');
-    const displayResearcherId = document.getElementById('displayResearcherId');
-    const paperIdInput = document.getElementById('paperId');
-    const paperTitleInput = document.getElementById('paperTitle');
-    const paperAbstractInput = document.getElementById('paperAbstract');
-    const paperCitationsInput = document.getElementById('paperCitations');
-    const paperYearInput = document.getElementById('paperYear');
-    const addPaperBtn = document.getElementById('addPaperBtn');
-    const generateAbstractBtn = document.getElementById('generateAbstractBtn');
-    const extractKeywordsPaperBtn = document.getElementById('extractKeywordsPaperBtn'); 
-    const datasetIdInput = document.getElementById('datasetId');
-    const datasetTitleInput = document.getElementById('datasetTitle');
-    const datasetDescriptionInput = document.getElementById('datasetDescription');
-    const datasetAssociatedPaperIdInput = document.getElementById('datasetAssociatedPaperId'); 
-    const datasetYearInput = document.getElementById('datasetYear');
-    const addDatasetBtn = document.getElementById('addDatasetBtn');
-    const generateDescriptionBtn = document.getElementById('generateDescriptionBtn');
-    const extractKeywordsDatasetBtn = document.getElementById('extractKeywordsDatasetBtn'); 
-    const aiLoadingIndicator = document.getElementById('aiLoadingIndicator');
-    const sIndexValueDisplay = document.getElementById('sIndexValue');
-    const structuralScoreDisplay = document.getElementById('structuralScore');
-    const semanticScoreDisplay = document.getElementById('semanticScore');
-    const updateScoreDisplay = document.getElementById('updateScore');
-    const dataSharingScoreDisplay = document.getElementById('dataSharingScore');
-    const datasetCountDisplay = document.getElementById('datasetCount');
-    const graphNodesDisplay = document.getElementById('graphNodes');
-    const graphEdgesDisplay = document.getElementById('graphEdges');
-    const paperCountDisplay = document.getElementById('paperCount');
-    const totalDatasetCountDisplay = document.getElementById('totalDatasetCount');
-    const nodeListDisplay = document.getElementById('nodeList');
-    const activityLogDisplay = document.getElementById('activityLog');
-
-    // --- Graph Visualization Functions ---
-    function initializeGraphVisualization() {
-        const options = {
-            nodes: { shape: 'dot', size: 16, font: { size: 12, color: '#333' }, borderWidth: 2 },
-            edges: { 
-                width: 2, 
-                arrows: 'to', 
-                smooth: { type: 'continuous' },
-                font: { align: 'top', size: 10, color: '#71717a' } 
-            }, 
-            groups: {
-                paper: { color: { background: '#60a5fa', border: '#2563eb' }, shape: 'ellipse' }, 
-                dataset: { color: { background: '#34d399', border: '#059669' }, shape: 'box' },   
-                paper_stub: { color: { background: '#d1d5db', border: '#6b7280' }, shape: 'ellipse', size: 10 } 
-            },
-            physics: {
-                enabled: true, 
-                forceAtlas2Based: { gravitationalConstant: -35, centralGravity: 0.008, springLength: 150, springConstant: 0.18, damping: 0.6 },
-                maxVelocity: 50, minVelocity: 0.1, solver: 'forceAtlas2Based', timestep: 0.5, 
-                stabilization: { iterations: 150, fit: true }
-            },
-            interaction: { tooltipDelay: 200, hideEdgesOnDrag: true, hover: true } 
-        };
-        const data = { nodes: visNodes, edges: visEdges };
-        try {
-            visNetwork = new vis.Network(graphVisContainer, data, options);
-            logActivity("Graph visualization initialized successfully.");
-            console.log("visNetwork object:", visNetwork);
-        } catch (e) {
-            console.error("Failed to initialize vis.Network:", e);
-            logActivity("CRITICAL ERROR: Failed to initialize graph visualization.", true);
-        }
-    }
-
-    function updateVisNode(nodeData) {
-        try {
-            if (!visNodes.get(nodeData.id)) {
-                 console.log("Adding new visNode:", nodeData);
-                 visNodes.add({ 
-                    id: nodeData.id, 
-                    label: `${nodeData.id}\n(${nodeData.title ? nodeData.title.substring(0,15) : 'Untitled'}...)`, 
-                    group: nodeData.type,
-                    title: `ID: ${nodeData.id}<br>Type: ${nodeData.type}<br>Title: ${nodeData.title || 'N/A'}<br>Researcher: ${nodeData.researcherId || 'N/A'}`
-                });
-            } else {
-                 console.log("Updating existing visNode (or re-adding):", nodeData);
-                 visNodes.update({ 
-                    id: nodeData.id, 
-                    label: `${nodeData.id}\n(${nodeData.title ? nodeData.title.substring(0,15) : 'Untitled'}...)`, 
-                    group: nodeData.type,
-                    title: `ID: ${nodeData.id}<br>Type: ${nodeData.type}<br>Title: ${nodeData.title || 'N/A'}<br>Researcher: ${nodeData.researcherId || 'N/A'}`
-                });
-            }
-        } catch (e) { console.error("Error adding/updating visNode:", e, nodeData); logActivity(`Error adding node ${nodeData.id} to visualization.`, true); }
-    }
-
-    function updateVisEdge(edgeData) {
-        if (!visNodes.get(edgeData.source)) {
-            console.warn(`Source node ${edgeData.source} for edge not in visNodes. Edge not added.`);
-            logActivity(`Graph Warn: Source node ${edgeData.source} for edge not found in viz. Edge might not appear.`, true);
-            return;
-        }
-        if (!visNodes.get(edgeData.target)) {
-            console.warn(`Target node ${edgeData.target} for edge not in visNodes. Edge not added.`);
-            logActivity(`Graph Warn: Target node ${edgeData.target} for edge not found in viz. Edge might not appear.`, true);
-            return;
-        }
-
-        try {
-            const edgeId = `${edgeData.source}_${edgeData.target}_${edgeData.type}_${visEdges.length + 1}`; 
-            console.log(`Attempting to add edge to vis.js: ID=${edgeId}, From=${edgeData.source}, To=${edgeData.target}, Type=${edgeData.type}`);
-            
-            let edgeColor = '#a1a1aa'; 
-            let edgeDashes = false;
-            if (edgeData.type === 'HAS_DATASET') {
-                edgeColor = '#10b981'; 
-                edgeDashes = [5, 5]; 
-            } else if (edgeData.type !== 'CITES') {
-                edgeColor = '#4f46e5'; 
-            }
-
-            const addedIds = visEdges.add({ 
-                id: edgeId,
-                from: edgeData.source, 
-                to: edgeData.target, 
-                arrows: 'to',
-                label: edgeData.type === 'CITES' ? '' : edgeData.type, 
-                color: { color: edgeColor, hover: edgeColor }, 
-                dashes: edgeDashes 
-            });
-            console.log("visEdges.add result (added IDs):", addedIds);
-            console.log("Total visEdges count:", visEdges.length);
-            if (addedIds.length === 0) {
-                logActivity(`Warning: visEdges.add did not return any ID for edge ${edgeData.source}->${edgeData.target}. Edge might not be visible.`, true);
-            } else {
-                logActivity(`Graph: Added edge ${edgeData.source} -> ${edgeData.target} (Type: ${edgeData.type})`);
-            }
-        } catch (e) { 
-            console.error("Error adding visEdge:", e, edgeData); 
-            logActivity(`Error adding edge ${edgeData.source}->${edgeData.target} to visualization: ${e.message}`, true); 
-        }
-    }
-
-
-    // --- Utility Functions ---
-    function logActivity(message, isError = false) {
-        const timestamp = new Date().toLocaleTimeString();
-        const colorClass = isError ? 'text-red-500 font-semibold' : 'text-gray-700'; 
-        activityLog.unshift({ time: timestamp, msg: message, colorClass: colorClass });
-        if (activityLog.length > 50) activityLog.pop();
-        renderActivityLog();
-    }
-
-    function renderActivityLog() {
-        if (activityLog.length === 0) { activityLogDisplay.innerHTML = '<p class="text-gray-500">No activity yet.</p>'; return; }
-        activityLogDisplay.innerHTML = activityLog.map(entry => 
-            `<p class="${entry.colorClass}"><span class="font-mono text-xs text-gray-400">${entry.time}</span>: ${entry.msg}</p>`
-        ).join('');
-    }
-    
-    function renderNodeList() {
-        const nodesArray = Array.from(knowledgeGraph.nodes.values()).slice(-5).reverse(); 
-        if (nodesArray.length === 0) { nodeListDisplay.innerHTML = 'No nodes in graph.'; return; }
-        nodeListDisplay.innerHTML = nodesArray.map(node => `<div><strong>${node.id}</strong> (${node.type}) - ${node.title ? node.title.substring(0,30) : 'Untitled'}...</div>`).join('');
-    }
-
-    // --- KnowledgeGraphBuilder Simulation ---
-    function addNodeToGraph(nodeData) {
-        if (!nodeData.id) { logActivity("Error: Node ID is required.", true); alert("Node ID is required."); return false; }
-        const isNewNode = !knowledgeGraph.nodes.has(nodeData.id);
-        knowledgeGraph.nodes.set(nodeData.id, nodeData);
-        updateVisNode(nodeData); 
-        if (!isNewNode) { logActivity(`Warning: Node ${nodeData.id} already exists. Overwriting.`, true); }
-        return true;
-    }
-
-    function addEdgeToGraph(sourceId, targetId, type) {
-        let sourceExists = knowledgeGraph.nodes.has(sourceId);
-        let targetExists = knowledgeGraph.nodes.has(targetId);
-
-        if (!sourceExists) { 
-            logActivity(`Error: Source node ${sourceId} for edge not found. Edge not added to internal graph.`, true); 
-            return false; 
-        }
+        const qualityValue = document.getElementById('qualityValue');
+        const impactValue = document.getElementById('impactValue');
+        const authorsValue = document.getElementById('authorsValue');
+        const institutionsValue = document.getElementById('institutionsValue');
         
-        if (!targetExists && type === 'CITES') { 
-            const stubNode = { id: targetId, type: 'paper_stub', title: `Stub: ${targetId}`, researcherId: 'unknown' };
-            addNodeToGraph(stubNode); 
-            logActivity(`Created stub node for cited paper: ${targetId}`);
-            targetExists = true; 
-        } else if (!targetExists) {
-            logActivity(`Error: Target node ${targetId} for edge type '${type}' not found. Edge not added to internal graph.`, true); 
-            return false;
+        const finalScore = document.getElementById('finalScore');
+
+        function calculateScores() {
+            const q = parseFloat(qualitySlider.value);
+            const reuseEvents = parseInt(impactSlider.value);
+            const numAuthors = parseInt(authorsSlider.value);
+            const numInstitutions = parseInt(institutionsSlider.value);
+
+            // Calculate Impact (I) score
+            // I = 1 + ln(1 + sum(w_reuse,k)) -> Simplified here as ln(1 + reuseEvents)
+            const i = 1 + Math.log(1 + reuseEvents);
+
+            // Calculate Collaboration (C) score
+            // C = (1 + ln(N_authors)) * (1 + 0.5 * ln(N_institutions))
+            const c = (1 + Math.log(numAuthors)) * (1 + 0.5 * Math.log(numInstitutions));
+
+            // Calculate final score
+            const s = q * i * c;
+
+            // Update UI
+            qualityValue.textContent = q.toFixed(1);
+            impactValue.textContent = reuseEvents;
+            authorsValue.textContent = numAuthors;
+            institutionsValue.textContent = numInstitutions;
+            finalScore.textContent = s.toFixed(2);
         }
-        
-        const newEdge = { source: sourceId, target: targetId, type: type };
-        knowledgeGraph.edges.push(newEdge);
-        updateVisEdge(newEdge); 
-        return true;
-    }
-    
-    function getMockEmbedding(text) {
-        if (!text) return 0.1;
-        return Math.min(0.1 + (text.length / 1000), 0.3); 
-    }
 
-    // --- Gemini API Call (Client-side calls Vercel Serverless Function) ---
-    async function generateWithGemini(promptText, type) {
-        aiLoadingIndicator.classList.remove('hidden');
-        logActivity(`✨ AI: Sending request to Vercel function for ${type} generation...`);
-        
-        // The client now calls our OWN API endpoint on Vercel
-        // This endpoint is defined by the `api/generate-text.js` file.
-        const vercelApiUrl = "/api/generate-text"; 
-
-        try {
-            const response = await fetch(vercelApiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ promptText: promptText }) // Send prompt in the body
-            });
-
-            const result = await response.json(); // Always try to parse JSON
-
-            if (!response.ok) {
-                // Error came from our serverless function or its call to Gemini
-                const errorMessage = result.error || `Request to Vercel function failed with status ${response.status}`;
-                console.error("Error from Vercel function:", result);
-                throw new Error(errorMessage);
-            }
-            
-            // Assuming the serverless function forwards the Gemini API's structure
-            console.log("Response from Vercel function (forwarded from Gemini):", result); 
-
-            if (result.candidates && result.candidates.length > 0) {
-                const candidate = result.candidates[0];
-                if (candidate.finishReason && candidate.finishReason !== "STOP" && candidate.finishReason !== "MAX_TOKENS") {
-                    let reasonMessage = `Content generation stopped. Reason: ${candidate.finishReason}.`;
-                    if (candidate.safetyRatings) {
-                        const blockedCategories = candidate.safetyRatings.filter(r => r.blocked).map(r => `${r.category} (Prob: ${r.probability})`).join(', ');
-                        if (blockedCategories) { reasonMessage += ` Blocked: ${blockedCategories}.`; }
-                    }
-                    throw new Error(reasonMessage);
-                }
-                if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0 && typeof candidate.content.parts[0].text === 'string') {
-                    const generatedText = candidate.content.parts[0].text;
-                    if (generatedText.trim() === "" && candidate.finishReason === "STOP") {
-                        logActivity(`✨ AI: Generated ${type}, but result was empty. Refine prompt?`, true);
-                        aiLoadingIndicator.classList.add('hidden'); return ""; 
-                    }
-                    logActivity(`✨ AI: Successfully generated ${type} via Vercel function.`); 
-                    aiLoadingIndicator.classList.add('hidden'); 
-                    return generatedText;
-                }
-            }
-            console.error("Unexpected API response structure from Vercel function or no text found:", result);
-            throw new Error("No valid content generated or unexpected API response structure from Vercel function. Check console.");
-        } catch (error) {
-            logActivity(`✨ AI Error (via Vercel function): ${error.message}`, true); 
-            console.error("Error calling Vercel function or processing its response:", error); 
-            aiLoadingIndicator.classList.add('hidden'); 
-            alert(`Failed to generate content via Vercel function. Check log/console. Error: ${error.message.substring(0, 200)}`); 
-            return null;
-        }
-    }
-
-    generateAbstractBtn.addEventListener('click', async () => {
-        const title = paperTitleInput.value.trim(); const keywords = paperAbstractInput.value.trim(); 
-        if (!title) { alert("Paper title needed for abstract generation."); return; }
-        let prompt = `Generate a concise academic abstract (100-150 words) for a paper titled "${title}".`;
-        if (keywords) { prompt += ` Keywords/concepts: ${keywords}.`; }
-        prompt += " Output suitable for scientific publication, no markdown."
-        const generatedAbstract = await generateWithGemini(prompt, "abstract");
-        if (generatedAbstract !== null) { paperAbstractInput.value = generatedAbstract; }
-    });
-
-    extractKeywordsPaperBtn.addEventListener('click', async () => { 
-        const abstractText = paperAbstractInput.value.trim();
-        if (!abstractText) { alert("Abstract text is needed to extract keywords."); return; }
-        let prompt = `Extract 5-7 relevant academic keywords from the following text. List the keywords separated by commas, without any introductory text or numbering:\n\n"${abstractText}"`;
-        const extractedKeywords = await generateWithGemini(prompt, "keywords for paper");
-        if (extractedKeywords !== null && extractedKeywords.trim() !== "") {
-            paperAbstractInput.value += `\n\nKeywords: ${extractedKeywords}`;
-        } else if (extractedKeywords === "") {
-            logActivity("AI returned empty keywords. No changes made to abstract.", true);
-        }
-    });
-
-    generateDescriptionBtn.addEventListener('click', async () => {
-        const title = datasetTitleInput.value.trim(); const keywords = datasetDescriptionInput.value.trim();
-        if (!title) { alert("Dataset title needed for description generation."); return; }
-        let prompt = `Generate a concise description (50-100 words) for a dataset titled "${title}".`;
-        if (keywords) { prompt += ` Keywords/topics: ${keywords}.`; }
-        prompt += " Description should be informative, highlight potential use, no markdown."
-        const generatedDescription = await generateWithGemini(prompt, "description");
-        if (generatedDescription !== null) { datasetDescriptionInput.value = generatedDescription; }
-    });
-
-    extractKeywordsDatasetBtn.addEventListener('click', async () => { 
-        const descriptionText = datasetDescriptionInput.value.trim();
-        if (!descriptionText) { alert("Description text is needed to extract keywords."); return; }
-        let prompt = `Extract 3-5 relevant keywords from the following dataset description. List the keywords separated by commas, without any introductory text or numbering:\n\n"${descriptionText}"`;
-        const extractedKeywords = await generateWithGemini(prompt, "keywords for dataset");
-        if (extractedKeywords !== null && extractedKeywords.trim() !== "") {
-            datasetDescriptionInput.value += `\n\nKeywords: ${extractedKeywords}`;
-        } else if (extractedKeywords === "") {
-            logActivity("AI returned empty keywords. No changes made to description.", true);
-        }
-    });
-
-    // --- Event Listeners for Adding Content ---
-    addPaperBtn.addEventListener('click', () => {
-        const currentResearcherId = researcherIdInput.value.trim() || 'default_researcher';
-        const paper = {
-            id: paperIdInput.value.trim(), title: paperTitleInput.value.trim() || `Paper ${paperIdInput.value.trim() || 'Untitled'}`,
-            abstract: paperAbstractInput.value.trim(), citations: paperCitationsInput.value.trim().split(',').map(c => c.trim()).filter(c => c),
-            year: parseInt(paperYearInput.value) || new Date().getFullYear(), type: 'paper', researcherId: currentResearcherId,
-            embedding: getMockEmbedding(paperAbstractInput.value.trim())
-        };
-        if (!paper.id) { alert("Paper ID is required!"); return; }
-        if (addNodeToGraph(paper)) { 
-            paper.citations.forEach(citedId => {
-                if(citedId) { 
-                    addEdgeToGraph(paper.id, citedId, 'CITES'); 
-                }
-            });
-            logActivity(`Added Paper: ${paper.id} by ${currentResearcherId}`);
-            clearPaperInputs(); calculateAndDisplaySIndex();
-        }
-    });
-
-    addDatasetBtn.addEventListener('click', () => {
-        const currentResearcherId = researcherIdInput.value.trim() || 'default_researcher';
-        const dataset = {
-            id: datasetIdInput.value.trim(), title: datasetTitleInput.value.trim() || `Dataset ${datasetIdInput.value.trim() || 'Untitled'}`,
-            description: datasetDescriptionInput.value.trim(), year: parseInt(datasetYearInput.value) || new Date().getFullYear(),
-            type: 'dataset', researcherId: currentResearcherId, embedding: getMockEmbedding(datasetDescriptionInput.value.trim())
-        };
-        const associatedPaperId = datasetAssociatedPaperIdInput.value.trim(); 
-
-        if (!dataset.id) { alert("Dataset ID is required!"); return; }
-        if (addNodeToGraph(dataset)) { 
-            if (associatedPaperId && knowledgeGraph.nodes.has(associatedPaperId)) { 
-                addEdgeToGraph(associatedPaperId, dataset.id, 'HAS_DATASET');
-            } else if (associatedPaperId) {
-                logActivity(`Warning: Associated paper ID '${associatedPaperId}' not found. Dataset '${dataset.id}' added without paper link.`, true);
-            }
-            logActivity(`Added Dataset: ${dataset.id} by ${currentResearcherId} 🥕`);
-            clearDatasetInputs(); calculateAndDisplaySIndex();
-        }
-    });
-    
-    function clearPaperInputs() {
-        paperIdInput.value = `paper_${String(Math.floor(Math.random()*1000)).padStart(3, '0')}`;
-        paperTitleInput.value = ''; paperAbstractInput.value = ''; paperCitationsInput.value = '';
-    }
-    function clearDatasetInputs() {
-        datasetIdInput.value = `dataset_${String(Math.floor(Math.random()*1000)).padStart(3, '0')}`;
-        datasetTitleInput.value = ''; datasetDescriptionInput.value = '';
-        datasetAssociatedPaperIdInput.value = ''; 
-    }
-
-    // --- Metric Calculation Simulations (Simplified) ---
-    function calculateStructuralMetricsSim(graph) {
-        const numNodes = graph.nodes.size; const numEdges = graph.edges.length;
-        if (numNodes === 0) return { connectivity: 0, centrality: 0, pagerank: 0, betweenness: 0, clustering: 0 };
-        const connectivity = Math.min(1, numEdges / (numNodes * (numNodes > 1 ? (numNodes -1)/2 : 1) ) ) || 0;
-        let totalDegree = 0; graph.nodes.forEach(node => { totalDegree += graph.edges.filter(e => e.source === node.id || e.target === node.id).length; });
-        const avgDegree = numNodes > 0 ? totalDegree / numNodes : 0;
-        const centrality = Math.min(1, avgDegree / (numNodes > 1 ? (numNodes-1) : 1)) || 0;
-        return {
-            connectivity: parseFloat(connectivity.toFixed(2)), centrality: parseFloat(centrality.toFixed(2)),
-            pagerank: parseFloat(Math.min(0.2 + Math.random() * 0.3 + 0.01 * numNodes, 1).toFixed(2)), 
-            betweenness: parseFloat(Math.min(0.1 + Math.random() * 0.2 + 0.005 * numEdges, 1).toFixed(2)), 
-            clustering: parseFloat(Math.min(0.15 + Math.random() * 0.3, 1).toFixed(2)) 
-        };
-    }
-
-    function calculateSemanticMetricsSim(graph) {
-        let totalSimilarity = 0; let edgeCountForSimilarity = 0;
-        graph.edges.forEach(edge => {
-            const node1 = graph.nodes.get(edge.source); const node2 = graph.nodes.get(edge.target);
-            if (node1 && node2 && node1.embedding && node2.embedding) {
-                totalSimilarity += (node1.embedding + node2.embedding) / 2; edgeCountForSimilarity++; }
+        [qualitySlider, impactSlider, authorsSlider, institutionsSlider].forEach(slider => {
+            slider.addEventListener('input', calculateScores);
         });
-        const avgSimilarity = edgeCountForSimilarity > 0 ? totalSimilarity / edgeCountForSimilarity : 0.05;
-        const completeness = graph.nodes.size / TARGET_NODE_COUNT;
-        return {
-            similarity: parseFloat(Math.min(1, avgSimilarity).toFixed(2)),
-            completeness: parseFloat(Math.min(1, completeness).toFixed(2))
-        };
-    }
 
-    function calculateKnowledgeUpdateMetricsSim(currentGraph, prevGraphState) {
-        const currentNumNodes = currentGraph.nodes.size; const currentNumEdges = currentGraph.edges.length;
-        const integrationRate = (currentNumNodes > prevGraphState.nodeCount && currentNumNodes > 0) ? (currentNumNodes - prevGraphState.nodeCount) / currentNumNodes : 0;
-        const centralityShift = Math.abs((currentNumNodes / (currentNumEdges + 1)) - (prevGraphState.nodeCount / (prevGraphState.edgeCount + 1))) / 5; 
-        return {
-            integration_rate: parseFloat(integrationRate.toFixed(2)),
-            centrality_shift: parseFloat(Math.max(0, Math.min(1, 0.5 - centralityShift)).toFixed(2)), 
-            temporal_consistency: 0.85 
-        };
-    }
-
-    function calculateDataSharingMetricsSim(graph, researcherId) {
-        let researcherDatasetCount = 0;
-        graph.nodes.forEach(node => { if (node.type === 'dataset' && node.researcherId === researcherId) researcherDatasetCount++; });
-        const score = Math.min(1, researcherDatasetCount / TARGET_DATASET_COUNT_FOR_MAX_SCORE);
-        return { data_sharing_score: parseFloat(score.toFixed(2)), dataset_count: researcherDatasetCount };
-    }
-
-    function calculateSIndex(struct, sem, update, ds) {
-        const totalScore = (STRUCTURAL_WEIGHT * struct) + (SEMANTIC_WEIGHT * sem) + (KNOWLEDGE_UPDATE_WEIGHT * update) + (DATA_SHARING_WEIGHT * ds);
-        return parseFloat((totalScore * 100).toFixed(2));
-    }
-
-    // --- Main Calculation and Display Logic ---
-    function calculateAndDisplaySIndex() {
-        const currentResearcherId = researcherIdInput.value.trim() || 'default_researcher';
-        displayResearcherId.textContent = currentResearcherId;
-
-        const structuralMetrics = calculateStructuralMetricsSim(knowledgeGraph);
-        const semanticMetrics = calculateSemanticMetricsSim(knowledgeGraph);
-        const updateMetrics = calculateKnowledgeUpdateMetricsSim(knowledgeGraph, previousGraphState);
-        const dataSharingMetrics = calculateDataSharingMetricsSim(knowledgeGraph, currentResearcherId);
-
-        const avgStructural = Object.values(structuralMetrics).reduce((a, b) => a + b, 0) / Object.keys(structuralMetrics).length;
-        const avgSemantic = Object.values(semanticMetrics).reduce((a, b) => a + b, 0) / Object.keys(semanticMetrics).length;
-        const avgUpdate = Object.values(updateMetrics).reduce((a, b) => a + b, 0) / Object.keys(updateMetrics).length;
-        const sIndex = calculateSIndex(avgStructural, avgSemantic, avgUpdate, dataSharingMetrics.data_sharing_score);
-
-        sIndexValueDisplay.textContent = sIndex.toFixed(2);
-        structuralScoreDisplay.textContent = avgStructural.toFixed(2);
-        semanticScoreDisplay.textContent = avgSemantic.toFixed(2);
-        updateScoreDisplay.textContent = avgUpdate.toFixed(2);
-        dataSharingScoreDisplay.textContent = dataSharingMetrics.data_sharing_score.toFixed(2);
-        datasetCountDisplay.textContent = dataSharingMetrics.dataset_count;
-
-        graphNodesDisplay.textContent = knowledgeGraph.nodes.size;
-        graphEdgesDisplay.textContent = knowledgeGraph.edges.length; 
-        
-        let papers = 0; let datasets = 0;
-        knowledgeGraph.nodes.forEach(node => { if (node.type === 'paper') papers++; else if (node.type === 'dataset') datasets++; });
-        paperCountDisplay.textContent = papers; totalDatasetCountDisplay.textContent = datasets;
-        renderNodeList();
-
-        previousGraphState.nodeCount = knowledgeGraph.nodes.size;
-        previousGraphState.edgeCount = knowledgeGraph.edges.length;
-        logActivity(`S-Index for ${currentResearcherId} calculated: ${sIndex.toFixed(2)}`);
-    }
-    
-    researcherIdInput.addEventListener('change', calculateAndDisplaySIndex);
-    researcherIdInput.addEventListener('keyup', (event) => { if (event.key === "Enter") calculateAndDisplaySIndex(); });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        initializeGraphVisualization();
-        logActivity("Demo initialized. Add papers/datasets and set researcher ID.");
-        calculateAndDisplaySIndex(); 
-        clearPaperInputs(); clearDatasetInputs();
-    });
-</script>
+        // Initial calculation on page load
+        calculateScores();
+    </script>
 </body>
 </html>
