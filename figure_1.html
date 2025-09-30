@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S-Index: Q*I*C System Architecture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .flow-arrow {
+            font-size: 2.5rem;
+            color: #3b82f6;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        .step-card {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .step-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+        .step-description {
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+        .formula {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e3a8a;
+            background-color: #eff6ff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #93c5fd;
+        }
+        .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-[#1e3a8a] mb-2">Figure 1: S-Index System Architecture (Q*I*C Framework)</h1>
+            <p class="text-lg md:text-xl text-[#3b82f6]">From Data Contribution to Aggregated Impact Score</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-y-2 md:gap-x-2 items-center">
+            <!-- Step 1: Data Ingestion -->
+            <div class="card step-card md:col-span-1">
+                <div class="icon">📥</div>
+                <h3 class="step-title">1. Data Ingestion</h3>
+                <p class="step-description">Researcher submits a dataset to a repository (e.g., Zenodo). System ingests the associated metadata.</p>
+            </div>
+
+            <div class="flow-arrow transform md:rotate-0 rotate-90">→</div>
+
+            <!-- Step 2: Quality Analysis -->
+            <div class="card step-card md:col-span-1">
+                <div class="icon">🔍</div>
+                <h3 class="step-title">2. Quality Analysis</h3>
+                <p class="step-description">An engine parses metadata against FAIR principles to calculate the initial Quality score.</p>
+                <div class="formula mt-4">Q score</div>
+            </div>
+
+            <div class="flow-arrow transform md:rotate-0 rotate-90">→</div>
+
+            <!-- Step 3: Knowledge Graph -->
+            <div class="card step-card md:col-span-1">
+                <div class="icon">🕸️</div>
+                <h3 class="step-title">3. Knowledge Graph</h3>
+                <p class="step-description">The dataset and its Q score are added as a node, linked to author and institution nodes.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-5">
+            <div class="col-start-1 md:col-start-5 text-center flow-arrow my-2 transform rotate-90">↓</div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-y-2 md:gap-x-2 items-center">
+             <!-- Step 5: S-Index Aggregator (Final) -->
+            <div class="card step-card md:col-span-1 md:col-start-1">
+                 <div class="icon">📈</div>
+                <h3 class="step-title">5. S-Index Aggregator</h3>
+                <p class="step-description">A query for an author retrieves all data, calculates C, computes each $s_j$, and sums them for the final $S_i$.</p>
+                 <div class="formula mt-4">S = Σ(Q×I×C)</div>
+            </div>
+            
+            <div class="flow-arrow transform md:rotate-180 rotate-90">→</div>
+            
+            <!-- Step 4: Impact Monitoring -->
+            <div class="card step-card md:col-span-3">
+                <div class="icon">📡</div>
+                <h3 class="step-title">4. Impact Monitoring Engine</h3>
+                <p class="step-description">A continuous process scans publications and other sources for reuse events (citations, DOI mentions). These events add "reuse" links to the dataset node in the graph, allowing for the dynamic calculation of the Impact score.</p>
+                 <div class="formula mt-4">I score</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
